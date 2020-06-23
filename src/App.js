@@ -1,26 +1,42 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from 'react-redux';
+import { nextStepAction, prevStepAction } from './actions';
+// import Question from './Question';
+import Step from './Step';
 
-function App() {
+function App(props) {
+  const { steps, nextStep, prevStep } = props;
+
+  const wizardSteps = steps.filter((step) => step.active).map((step) => <Step key={step.id} title={step.title} questions={step.questions} />);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {wizardSteps}
+      <input
+        type="button"
+        value="prev"
+        onClick={(e) => {
+          prevStep();
+        }}
+      />
+      <input
+        type="button"
+        value="next"
+        onClick={(e) => {
+          nextStep();
+        }}
+      />
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  steps: state,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  nextStep: () => dispatch(nextStepAction()),
+  prevStep: () => dispatch(prevStepAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
